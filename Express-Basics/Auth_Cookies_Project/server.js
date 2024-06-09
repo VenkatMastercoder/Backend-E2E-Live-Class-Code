@@ -2,14 +2,17 @@ const { PrismaClient } = require("@prisma/client");
 const express = require("express");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
+var cookie = require("cookie");
 
-
-// App Instance
 const app = express();
 
 const prisma = new PrismaClient();
 
-app.use(express.json()); // JSON 
+app.use(express.json()); // JSON
+
+app.get("/", (req, res) => {
+  res.send("Hello - Auth cookie");
+});
 
 app.post("/register", async (req, res) => {
   // Data from Frontend
@@ -55,6 +58,7 @@ app.post("/login", async (req, res) => {
   if (userExits === null) {
     res.json({ message: "User Not Exists.go Register First" });
   } else {
+    // 123456 // djfgpndpg
     const user = await bcrypt.compare(userData.password, userExits.password);
 
     if (user) {
@@ -75,6 +79,22 @@ app.post("/login", async (req, res) => {
         },
       });
 
+      res.cookie("refreshToken", refreshToken, {
+        sameSite: "strict",
+        httpOnly: true,
+        secure: false,
+        maxAge: 60 * 60,
+        path: "/",
+      });
+
+      res.cookie("accessToken", accessToken, {
+        sameSite: "strict",
+        httpOnly: true,
+        secure: false,
+        maxAge: 60 * 60,
+        path: "/",
+      });
+
       res.json({
         message: "Login Sucessfully",
         data: userData,
@@ -87,6 +107,12 @@ app.post("/login", async (req, res) => {
       res.json({ message: "password Invaild" });
     }
   }
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("refreshToken");
+  res.clearCookie("accessToken");
+  res.send("cookie cleared");
 });
 
 app.post("/refresh", async (req, res) => {
@@ -113,11 +139,13 @@ app.post("/refresh", async (req, res) => {
           expiresIn: "2m",
         });
 
-        return res.json({
-          token: {
-            accessToken,
-          },
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          secure: false,
+          maxAge: 60 * 60,
         });
+
+        return res.send("true");
       } else {
         return res.json({ message: "User Not Authenticated", error: err });
       }
@@ -125,24 +153,11 @@ app.post("/refresh", async (req, res) => {
   }
 });
 
-app.get("/user1", (req, res) => {
-  // Data from Frontend
-
-  // DB Logic
-
-  // data to Frontend
-  res.send("Data");
-}); // Public Route
-
 const authToken = (req, res, next) => {
   console.log("1.", req.headers);
 
-  const authToken = req.headers["authorization"];
-  const token = authToken && authToken.split(" ")[1];
-
-  console.log("2.", authToken);
-
-  console.log("3.", token);
+  const authToken = req.headers.cookie;
+  const token = authToken && authToken.accessToken;
 
   if (!token) {
     return res.send("go login Token Not vaild");
@@ -157,8 +172,23 @@ const authToken = (req, res, next) => {
   }
 };
 
-app.get("/user2", authToken, (req, res) => {
-  res.send("Data");
-}); // Private Route
+app.get("/user/:user_id", authToken, async (req, res) => {
+  // data from frontend
 
-app.listen(3008);
+  const { user_id } = req.params;
+
+  // DB Logic
+
+  const data = await prisma.user.findUnique({
+    where: {
+      user_id: user_id,
+    },
+  });
+
+  // res
+  res.json({
+    data: data,
+  });
+});
+
+app.listen(4001);
