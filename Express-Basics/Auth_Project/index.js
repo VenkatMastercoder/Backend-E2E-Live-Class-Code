@@ -3,13 +3,12 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 
-
 // App Instance
 const app = express();
 
 const prisma = new PrismaClient();
 
-app.use(express.json()); // JSON 
+app.use(express.json()); // JSON
 
 app.post("/register", async (req, res) => {
   // Data from Frontend
@@ -149,7 +148,7 @@ const authToken = (req, res, next) => {
   } else {
     jwt.verify(token, "key", (err) => {
       if (err) {
-        return res.send("Error");
+        return res.status(401).json({ errors: err });
       } else {
         next();
       }
@@ -158,6 +157,7 @@ const authToken = (req, res, next) => {
 };
 
 app.get("/user2", authToken, (req, res) => {
+  console.log("Done");
   res.send("Data");
 }); // Private Route
 

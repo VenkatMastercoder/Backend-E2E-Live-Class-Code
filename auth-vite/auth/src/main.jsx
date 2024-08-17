@@ -6,6 +6,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Login from "./Login.jsx";
 import Register from "./Register.jsx";
 import User from "./User.jsx";
+import RequireAuth from "./RequireAuth.jsx";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +23,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/user",
-    element: <User />,
+    element: (
+      <RequireAuth>
+        <User />
+      </RequireAuth>
+    ),
   },
 ]);
 

@@ -51,6 +51,11 @@ app.get("/:id", async (req, res) => {
   res.json({ message: "product Retrieved Sucessfully", data: productData });
 });
 
+// Model - Schema
+// Router File
+// Controller
+// Service - DB Logic
+
 app.post("/", async (req, res) => {
   // Data from Frontend
   const data = req.body;
