@@ -1,0 +1,87 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  user_id      String @id @default(cuid())
+  name         String
+  email        String @unique
+  password     String
+  phone_number String
+  address      Json
+
+  order Order[]
+  payment Payment[]
+}
+
+model Product {
+  product_id       String  @id @default(cuid())
+  product_title    String
+  orignal_price    String
+  selling_price    Float
+  product_discount Float
+  product_image    String
+  is_product_live  Boolean
+  stock_count      Int
+  is_refundable    Boolean
+  ware_house       Json
+  weight           String
+  height           String
+
+  product_details ProductDetails?
+  order Order[]
+  payment Payment[]
+}
+
+model ProductDetails {
+  product_detail String @id @default(cuid())
+  product_image  Json
+
+  product_id String  @unique
+  product Product @relation(fields:[product_id],references:[product_id])
+}
+
+model Order {
+  order_id   String @id @default(cuid())
+  order_name String
+
+  user_id String
+  user User @relation(fields:[user_id],references:[user_id])
+
+  product_id String
+  product Product @relation(fields:[product_id],references:[product_id])
+}
+
+model Payment {
+  payment_id String @id @default(cuid())
+
+  user_id String
+  user User @relation(fields:[user_id],references:[user_id])
+
+  product_id String
+  product Product @relation(fields:[product_id],references:[product_id])
+}
+
+model CMSUser {
+  cms_user_id String   @id @default(cuid())
+  name        String
+  password    String
+  email       String   
+  tag         String
+  role        Role
+  proof       Json
+  details     Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
