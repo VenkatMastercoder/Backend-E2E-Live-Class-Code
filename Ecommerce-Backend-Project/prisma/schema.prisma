@@ -14,9 +14,17 @@ model User {
   password     String
   phone_number String
   address      Json
-
+  
   order Order[]
   payment Payment[]
+
+}
+
+model Catgory {
+  catgory_id       String  @id @default(cuid())
+  catgory_name     String  @unique
+
+  product         Product[]
 }
 
 model Product {
@@ -32,6 +40,9 @@ model Product {
   ware_house       Json
   weight           String
   height           String
+
+  catgory_name     String
+  catgory          Catgory @relation(fields:[catgory_name],references:[catgory_name])
 
   product_details ProductDetails?
   order Order[]
@@ -78,6 +89,9 @@ model CMSUser {
   details     Json
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+ refreshToken RefreshToken[]
+
 }
 
 enum Role {
@@ -85,3 +99,13 @@ enum Role {
   ADMIN
   SUPER_ADMIN
 }
+
+model RefreshToken {
+  id Int @unique @default(autoincrement())
+  user_id String 
+  Refresh_Token String
+
+  cms_user_id String
+  cms_user CMSUser @relation(fields:[cms_user_id],references:[cms_user_id])
+}
+

@@ -1,0 +1,19 @@
+{
+  "name": "zod-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "prisma": "^6.4.1",
+    "zod": "^3.24.2"
+  }
+}

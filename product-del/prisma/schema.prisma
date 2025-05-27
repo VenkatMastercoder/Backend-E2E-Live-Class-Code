@@ -1,0 +1,32 @@
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  product_id String @id
+  product_name String
+  product_price String
+  
+  is_deleted Boolean @default(false)
+  deletedAt  String
+
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  order Order[]
+}
+
+
+model Order {
+  order_id String @id
+  order_name String 
+
+  product_id String? @default("1")
+
+  product Product? @relation(fields:[product_id],references:[product_id],onDelete: SetDefault)
+
+}

@@ -14,6 +14,8 @@ app.get("/", async (req, res) => {
   // Db Logic
   const data = await prisma.user.findMany();
 
+  // [{},{}] - 10 user
+
   // Data to Frontend
   res.json({ data: data });
 });

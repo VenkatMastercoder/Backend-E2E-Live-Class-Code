@@ -1,0 +1,24 @@
+app.get("/admin", roleBasedMiddleware(["ADMIN"]), async (req, res) => {
+  // Data from Frontend [ No Data only Token ]
+
+  // DB LOGIC
+  const user_data = await prisma.cMSUser.findMany({
+    where: {
+      role: "ADMIN",
+    },
+  });
+
+  // DB TO Frontend
+  // res.send(user_data);
+});
+
+app.get("/super-admin", roleBasedMiddleware(["SUPER_ADMIN", "ADMIN"]), async (req, res) => {
+    // Data from Frontend [ No Data only Token ]
+
+    // DB LOGIC
+    const user_data = await prisma.cMSUser.findMany();
+
+    // DB TO Frontend
+    res.json({ data: user_data });
+  }
+);
