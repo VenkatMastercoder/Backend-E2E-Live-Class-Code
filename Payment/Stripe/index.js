@@ -1,5 +1,5 @@
 // This is your test secret API key.
-const stripe = require('stripe')('sk_test_51Nyli1SEU6LPGcfbjr3TYbsFnnkQvKMRzKHyWcsrN8qStlRpmXrZ8xoU5V4z4sZuQqGu5nz23niQLWcuwIJeBSgM00798yvLh5');
+const stripe = require('stripe')('demo');
 const express = require('express');
 const app = express();
 app.use(express.static('public'));
